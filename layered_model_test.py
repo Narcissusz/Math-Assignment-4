@@ -11,7 +11,7 @@ def test_define_dense_model_single_layer():
     model = define_dense_model_single_layer(43, activation_f='sigmoid', output_length=1)
     assert len(model.layers) == 1, " model should have 1 layer"
     assert model.layers[0].input.shape == (None, 43), " input.shape is not correct"
-    assert model.layers[0].output_shape == (None, 1), " output_shape is not correct"
+    assert model.layers[0].output.shape == (None, 1), " output.shape is not correct"
 
 
 def test_define_dense_model_with_hidden_layer():
