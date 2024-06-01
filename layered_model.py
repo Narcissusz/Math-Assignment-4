@@ -2,13 +2,18 @@ from tensorflow.keras.datasets import mnist
 from tensorflow import keras
 from tensorflow.keras import layers
 import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+
 
 def define_dense_model_single_layer(input_length, activation_f='sigmoid', output_length=1):
     """Define a dense model with a single layer with the following parameters:
     input_length: the number of inputs
     activation_f: the activation function
     output_length: the number of outputs (number of neurons)"""
-    model = None
+    model = Sequential()
+    model.add(Dense(output_length, activation=activation_f, input_shape=(input_length,)))
+    return model
 
 def define_dense_model_with_hidden_layer(input_length, 
                                          activation_func_array=['relu','sigmoid'],
@@ -19,8 +24,9 @@ def define_dense_model_with_hidden_layer(input_length,
     activation_func_array: the activation function for the hidden layer and the output layer
     hidden_layer_size: the number of neurons in the hidden layer
     output_length: the number of outputs (number of neurons in the output layer)"""
-
-    model = None
+    model = Sequential()
+    model.add(Dense(hidden_layer_size, activation=activation_func_array[0], input_shape=(input_length,)))
+    model.add(Dense(output_length, activation=activation_func_array[1]))
     return model
 
 
@@ -44,6 +50,11 @@ def fit_mnist_model_single_digit(x_train, y_train, target_digit, model, epochs=1
     then fit the model on the training data. (pass the epochs and batch_size params)
     """
     y_train = binarize_labels(y_train, target_digit)
+    # Compile the model
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    
+    # Fit the model on the training data
+    model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size)
     return model
 
 def evaluate_mnist_model_single_digit(x_test, y_test, target_digit, model):
@@ -51,5 +62,5 @@ def evaluate_mnist_model_single_digit(x_test, y_test, target_digit, model):
     Hint: use model.evaluate() to evaluate the model on the test data.
     """
     y_test = binarize_labels(y_test, target_digit)
-    loss, accuracy = None, None  ## change this.
+    loss, accuracy = model.evaluate(x_test, y_test)
     return loss, accuracy
